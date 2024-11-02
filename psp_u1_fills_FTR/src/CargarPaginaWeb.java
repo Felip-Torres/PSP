@@ -13,25 +13,34 @@ public class CargarPaginaWeb {
         String urlString = args[0];
         try {
             URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();// conecta a la pagina
+            connection.setRequestMethod("GET");//GET es el metodo mas comun
 
-            // Verificar respuesta
-            int responseCode = connection.getResponseCode();
-            if (responseCode != 200) {
+            int responseCode = connection.getResponseCode();//Cogo el codigo de respuesta
+            if (responseCode != 200) {//200 es el codigo que da cuando todo a ido bien
                 System.out.println("Error al conectar: Código de respuesta " + responseCode);
                 System.exit(2);
             }
 
             // Leer el contenido de la página
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                String cad="";
+                String linea;
+
+                while ((linea = br.readLine()) != null) {
+                    cad+=linea;
                 }
+                System.out.println(cad);
+
+                /*String linea;
+
+                while ((linea = br.readLine()) != null) {
+                    System.out.println(linea);
+                }*/
+
             }
         } catch (Exception e) {
-            System.out.println("Error al descargar la página: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 }
