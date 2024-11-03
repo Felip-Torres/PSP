@@ -12,18 +12,18 @@ public class AnalizarNombreCaracteres {
         char character = args[0].charAt(0); // Carácter a contar
         int count = 0;
 
-        StringBuilder contenido = new StringBuilder();
+        StringBuilder contenidoHTML = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
-                contenido.append(linea);
+                contenidoHTML.append(linea);
             }
         } catch (IOException e) {
             System.err.println("Error al leer el contenido: " + e.getMessage());
             System.exit(1);
         }
 
-        String html = contenido.toString();
+        String html = contenidoHTML.toString();
         // Contar el número de veces que el carácter aparece en el HTML
         for (int i = 0; i < html.length(); i++) {
             if (html.charAt(i) == character) {

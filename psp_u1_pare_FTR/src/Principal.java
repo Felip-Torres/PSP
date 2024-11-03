@@ -42,8 +42,15 @@ public class Principal {
             7. Ejecutar archivo index.html
             8. Salir
             """);
+
+            // Bucle para asegurar que se ingresa un número
+            while (!sc.hasNextInt()) {
+                System.out.println("Introduce un numero.");
+                sc.nextLine(); // Limpiar la entrada no válida
+            }
+
             opcion = sc.nextInt();
-            sc.nextLine();  // Limpiar el buffer
+            sc.nextLine(); // Limpiar el buffer
 
             // Ejecutar opción seleccionada
             switch (opcion) {
@@ -51,7 +58,7 @@ public class Principal {
                 case 2 -> analizarCaracter();
                 case 3 -> sustituirLetra();
                 case 4 -> leerEncrypted();
-                case 5 -> System.out.println("Función para buscar palabras clave aún no implementada.");
+                case 5 -> buscarPalabraClave();
                 case 6 -> System.out.println("Función para crear archivo index.html aún no implementada.");
                 case 7 -> System.out.println("Función para ejecutar archivo index.html aún no implementada.");
                 case 8 -> System.out.println("Saliendo del programa...");
@@ -151,7 +158,7 @@ public class Principal {
     }
 
     public static void sustituirLetra() {
-        if (textoHTML.equals("")) {
+        if (textoHTML.isEmpty()) {
             System.out.println("Primero se necesita cargar la página web. Este proceso se hará automáticamente.");
             cargarPaginaWeb();
         }
@@ -239,4 +246,58 @@ public class Principal {
             System.out.println("Ocurrió un error: " + e.getMessage());
         }
     }
+
+    public static void buscarPalabraClave() {
+        if (textoHTML.isEmpty()) {
+            System.out.println("Primero se necesita cargar la página web. Este proceso se hará automáticamente.");
+            cargarPaginaWeb();
+        }
+
+        Scanner sc = new Scanner(System.in);
+        String palabraClave;
+
+        // Solicitar la palabra clave
+        do {
+            System.out.print("Introduce la palabra clave que deseas buscar: ");
+            palabraClave = sc.nextLine();
+
+            // Validar que sea una única palabra
+            if (!palabraClave.matches("\\w+")) {// \w es una expresión regular que representa cualquier carácter alfanumérico o guion bajo. Con el + le indico que haber como minimo uno pero pueden haber mas
+                System.out.println("Debes introducir una única palabra válida.");
+            }
+        } while (!palabraClave.matches("\\w+"));
+
+        // Directorio y archivo de errores
+        String currentDir = System.getProperty("user.dir");
+        String com = Paths.get(currentDir, relativePath).toString();
+        String errorLog = Paths.get(currentDir, errorLogPath).toString();
+        String filename = "BuscarPalabraClave";
+        ProcessBuilder pb;
+
+        try {
+            pb = new ProcessBuilder("java", filename, palabraClave);
+            pb.directory(new File(com));
+            pb.redirectError(new File(errorLog));
+            Process p = pb.start();
+
+            // Enviar contenido HTML al proceso hijo
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()))) {
+                writer.write(textoHTML);
+                writer.flush();
+            }
+
+            // Leer la salida del proceso hijo
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                String result;
+                while ((result = reader.readLine()) != null) {
+                    System.out.println(result);
+                }
+            }
+
+            p.waitFor();
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Ocurrió un error: " + e.getMessage());
+        }
+    }
 }
+
