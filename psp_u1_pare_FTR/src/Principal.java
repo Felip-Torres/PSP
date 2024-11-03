@@ -50,7 +50,7 @@ public class Principal {
                 case 1 -> cargarPaginaWeb();
                 case 2 -> analizarCaracter();
                 case 3 -> sustituirLetra();
-                case 4 -> System.out.println("Función para leer encrypted.txt aún no implementada.");
+                case 4 -> leerEncrypted();
                 case 5 -> System.out.println("Función para buscar palabras clave aún no implementada.");
                 case 6 -> System.out.println("Función para crear archivo index.html aún no implementada.");
                 case 7 -> System.out.println("Función para ejecutar archivo index.html aún no implementada.");
@@ -224,6 +224,7 @@ public class Principal {
             // Leer la salida del proceso hijo
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
                 String linea;
+                System.out.println("Contenido de encrypted.txt");
                 while ((linea = reader.readLine()) != null) {
                     System.out.println(linea); // Mostrar el contenido de encrypted.txt
                 }
