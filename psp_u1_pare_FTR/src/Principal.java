@@ -49,7 +49,7 @@ public class Principal {
             switch (opcion) {
                 case 1 -> cargarPaginaWeb();
                 case 2 -> analizarCaracter();
-                case 3 -> System.out.println("Función para sustituir letra aún no implementada.");
+                case 3 -> sustituirLetra();
                 case 4 -> System.out.println("Función para leer encrypted.txt aún no implementada.");
                 case 5 -> System.out.println("Función para buscar palabras clave aún no implementada.");
                 case 6 -> System.out.println("Función para crear archivo index.html aún no implementada.");
@@ -114,7 +114,7 @@ public class Principal {
 
             // Validar que solo se ha introducido un carácter
             if (input.length() != 1) {
-                System.out.println("Error: Debes introducir un solo carácter.");
+                System.out.println("Debes introducir un solo carácter.");
             }
         }while (input.length() != 1);
 
@@ -147,6 +147,95 @@ public class Principal {
             System.out.println("Ocurrió un error: " + e.getMessage());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void sustituirLetra() {
+        if (textoHTML.equals("")) {
+            System.out.println("Primero se necesita cargar la página web. Este proceso se hará automáticamente.");
+            cargarPaginaWeb();
+        }
+
+        Scanner sc = new Scanner(System.in);
+        String letraOriginal;
+        String letraSustituta;
+
+        // Validar que el usuario introduzca solo un carácter para cada letra
+        do {
+            System.out.print("Introduce la letra que sustituir: ");
+            letraOriginal = sc.nextLine();
+            if (letraOriginal.length() != 1 || !Character.isLetter(letraOriginal.charAt(0))) {
+                System.out.println("Debes introducir solo una letra.");
+            }
+        } while (letraOriginal.length() != 1 || !Character.isLetter(letraOriginal.charAt(0)));
+
+        do {
+            System.out.print("Introduce la letra que sustituira '" + letraOriginal + "': ");
+            letraSustituta = sc.nextLine();
+            if (letraSustituta.length() != 1 || !Character.isLetter(letraSustituta.charAt(0))) {
+                System.out.println("Debes introducir solo una letra.");
+            }
+        } while (letraSustituta.length() != 1 || !Character.isLetter(letraSustituta.charAt(0)));
+
+        // Obtener el directorio actual
+        String currentDir = System.getProperty("user.dir");
+        String com = Paths.get(currentDir, relativePath).toString();
+        String errorLog = Paths.get(currentDir, errorLogPath).toString();
+        String filename="SustituirLetra";
+        ProcessBuilder pb;
+
+        try {
+            pb = new ProcessBuilder("java",filename, letraOriginal, letraSustituta);
+            pb.directory(new File(com));
+            pb.redirectError(new File(errorLog));
+            Process p=pb.start();
+
+            // Enviar el contenido de textoHTML al proceso hijo
+            try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()))) {
+                writer.write(textoHTML);
+            }
+
+            // Leer la respuesta del proceso hijo
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                String mensaje = reader.readLine();
+                System.out.println(mensaje);
+            }
+            p.waitFor();
+
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Ocurrió un error: " + e.getMessage());
+        }
+    }
+
+    public static void leerEncrypted() {
+        // Directorio del archivo LeerEncrypted.java
+        String currentDir = System.getProperty("user.dir");
+        String com = Paths.get(currentDir, relativePath).toString();
+        String errorLog = Paths.get(currentDir, errorLogPath).toString();
+        String filename = "LeerEncrypted";
+
+        ProcessBuilder pb;
+        try {
+            pb = new ProcessBuilder("java", filename);
+            pb.directory(new File(com));
+            pb.redirectError(new File(errorLog));
+            Process p = pb.start();
+
+            // Leer la salida del proceso hijo
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                String linea;
+                while ((linea = reader.readLine()) != null) {
+                    System.out.println(linea); // Mostrar el contenido de encrypted.txt
+                }
+            }
+
+            int exitCode = p.waitFor();
+            if (exitCode != 0) {
+                System.out.println("Error al leer encrypted.txt. Código de salida: " + exitCode);
+            }
+
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Ocurrió un error: " + e.getMessage());
         }
     }
 }
