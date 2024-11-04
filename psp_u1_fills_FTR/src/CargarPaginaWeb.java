@@ -24,19 +24,19 @@ public class CargarPaginaWeb {
 
             // Leer el contenido de la página
             try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                String cad="";
+                /*String cad="";
                 String linea;
 
                 while ((linea = br.readLine()) != null) {
                     cad+=linea;
                 }
-                System.out.println(cad);
+                System.out.println(cad);*/
 
-                /*String linea;
+                String linea;
 
                 while ((linea = br.readLine()) != null) {
                     System.out.println(linea);
-                }*/
+                }
 
             }
         } catch (Exception e) {

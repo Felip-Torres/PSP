@@ -1,4 +1,5 @@
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
@@ -7,6 +8,9 @@ public class Principal {
     private static String textoHTML="";
     private static final String relativePath = "../psp_u1_fills_FTR/out/production/psp_u1_fills_FTR";
     private static final String errorLogPath = "../psp_u1_pare_FTR/errores.txt";
+    private static final String currentDir = System.getProperty("user.dir");
+    private static final String com = Paths.get(currentDir, relativePath).toString();
+    private static final String errorLog = Paths.get(currentDir, errorLogPath).toString();
 
 
     public static void main(String[] args) {
@@ -59,8 +63,8 @@ public class Principal {
                 case 3 -> sustituirLetra();
                 case 4 -> leerEncrypted();
                 case 5 -> buscarPalabraClave();
-                case 6 -> System.out.println("Función para crear archivo index.html aún no implementada.");
-                case 7 -> System.out.println("Función para ejecutar archivo index.html aún no implementada.");
+                case 6 -> crearArchivoIndex();
+                case 7 -> ejecutarArchivoIndex();
                 case 8 -> System.out.println("Saliendo del programa...");
                 default -> System.out.println("Opción no válida. Inténtelo de nuevo.");
             }
@@ -73,9 +77,6 @@ public class Principal {
     // Método para cargar la página web
     private static void cargarPaginaWeb() {
         // Obtener el directorio actual
-        String currentDir = System.getProperty("user.dir");
-        String com = Paths.get(currentDir, relativePath).toString();
-        String errorLog = Paths.get(currentDir, errorLogPath).toString();
         String filename="CargarPaginaWeb";
         ProcessBuilder pb;
 
@@ -91,7 +92,7 @@ public class Principal {
                 String linea;
                 System.out.println("Contenido de la página web:");
                 while ((linea = reader.readLine()) != null) {
-                    sb.append(linea);
+                    sb.append(linea).append("\n");
                 }
                 textoHTML = sb.toString();
             }
@@ -126,9 +127,6 @@ public class Principal {
         }while (input.length() != 1);
 
         // Obtener el directorio actual
-        String currentDir = System.getProperty("user.dir");
-        String com = Paths.get(currentDir, relativePath).toString();
-        String errorLog = Paths.get(currentDir, errorLogPath).toString();
         String filename="AnalizarNombreCaracteres";
         ProcessBuilder pb;
 
@@ -185,9 +183,6 @@ public class Principal {
         } while (letraSustituta.length() != 1 || !Character.isLetter(letraSustituta.charAt(0)));
 
         // Obtener el directorio actual
-        String currentDir = System.getProperty("user.dir");
-        String com = Paths.get(currentDir, relativePath).toString();
-        String errorLog = Paths.get(currentDir, errorLogPath).toString();
         String filename="SustituirLetra";
         ProcessBuilder pb;
 
@@ -216,9 +211,6 @@ public class Principal {
 
     public static void leerEncrypted() {
         // Directorio del archivo LeerEncrypted.java
-        String currentDir = System.getProperty("user.dir");
-        String com = Paths.get(currentDir, relativePath).toString();
-        String errorLog = Paths.get(currentDir, errorLogPath).toString();
         String filename = "LeerEncrypted";
 
         ProcessBuilder pb;
@@ -268,9 +260,6 @@ public class Principal {
         } while (!palabraClave.matches("\\w+"));
 
         // Directorio y archivo de errores
-        String currentDir = System.getProperty("user.dir");
-        String com = Paths.get(currentDir, relativePath).toString();
-        String errorLog = Paths.get(currentDir, errorLogPath).toString();
         String filename = "BuscarPalabraClave";
         ProcessBuilder pb;
 
@@ -299,5 +288,80 @@ public class Principal {
             System.out.println("Ocurrió un error: " + e.getMessage());
         }
     }
+
+    public static void crearArchivoIndex() {
+
+        File encryptedFile = new File(com+"/encrypted.txt");
+
+        // Comprobar si el archivo encrypted.txt existe
+        if (!encryptedFile.exists()) {
+            System.out.println("El archivo encrypted.txt no existe.");
+            System.out.println("¿Deseas ejecutar la opción 3 (Sustituir letra) para crearlo? (s/n)");
+
+            Scanner sc = new Scanner(System.in);
+            String respuesta = sc.nextLine().trim().toLowerCase();
+
+            if (respuesta.equals("s")) {
+                sustituirLetra();  // Llamar al método para sustituir letras y crear encrypted.txt
+            } else {
+                System.out.println("No se puede crear index.html sin el archivo encrypted.txt.");
+                return;
+            }
+        }
+
+        // Ejecutar el proceso hijo para crear index.html
+        System.out.println("Creando index:");
+        String filename = "CrearArchivoIndex";
+
+        ProcessBuilder pb;
+        try {
+            pb = new ProcessBuilder("java", filename);
+            pb.directory(new File(com));
+            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            pb.redirectError(new File(errorLog));
+            Process p = pb.start();
+            p.waitFor();
+
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Ocurrió un error: " + e.getMessage());
+        }
+    }
+
+    public static void ejecutarArchivoIndex() {
+
+        File html = new File(com+"/index.html");
+
+        // Comprobar si el archivo encrypted.txt existe
+        if (!html.exists()) {
+            System.out.println("El archivo index.html no existe.");
+            System.out.println("¿Deseas ejecutar la opción 6 (Crear archivo index.html) para crearlo? (s/n)");
+
+            Scanner sc = new Scanner(System.in);
+            String respuesta = sc.nextLine().trim().toLowerCase();
+
+            if (respuesta.equals("s")) {
+                crearArchivoIndex();
+            } else {
+                System.out.println("No se puede leer index.html si no existe");
+                return;
+            }
+        }
+
+        System.out.println("Ejecutando index:");
+        String filename = "EjecutarIndex";
+
+        ProcessBuilder pb;
+        try {
+            pb = new ProcessBuilder("java", filename);
+            pb.directory(new File(com));
+            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+            pb.redirectError(new File(errorLog));
+            Process p = pb.start();
+            p.waitFor();
+
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Ocurrió un error: " + e.getMessage());
+        }
+    }7
 }
 
