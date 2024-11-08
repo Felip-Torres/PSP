@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="psp_u1_pare_FTR:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/psp_u1_pare_FTR_jar</output-path>
+    <root id="archive" name="psp_u1_pare_FTR.jar">
+      <element id="module-output" name="psp_u1_pare_FTR" />
+    </root>
+  </artifact>
+</component>
