@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PracticaU1.iml" filepath="$PROJECT_DIR$/PracticaU1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/PracticaU1.iml" filepath="$PROJECT_DIR$/.idea/PracticaU1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/psp_u1_fills_FTR/psp_u1_fills_FTR.iml" filepath="$PROJECT_DIR$/psp_u1_fills_FTR/psp_u1_fills_FTR.iml" />
+      <module fileurl="file://$PROJECT_DIR$/psp_u1_pare_FTR/psp_u1_pare_FTR.iml" filepath="$PROJECT_DIR$/psp_u1_pare_FTR/psp_u1_pare_FTR.iml" />
     </modules>
   </component>
 </project>

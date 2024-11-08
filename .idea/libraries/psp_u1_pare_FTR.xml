@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="psp_u1_pare_FTR">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Jars/psp_u1_pare_FTR/psp_u1_pare_FTR.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
