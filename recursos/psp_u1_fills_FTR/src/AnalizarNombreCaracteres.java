@@ -4,14 +4,11 @@ import java.io.InputStreamReader;
 
 public class AnalizarNombreCaracteres {
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.err.println("Argumentos incorrectos");
-            System.exit(1);
-        }
-
+        //No compruebo los argumentos, porque ya lo hace el padre
         char character = args[0].charAt(0); // Carácter a contar
         int count = 0;
 
+        //Leo el textoHTML del padre
         StringBuilder contenidoHTML = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             String linea;

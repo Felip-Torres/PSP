@@ -1,16 +1,19 @@
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class Principal {
-    private static String paginaWeb = "";
+    //Guardara la url de la pagina web
+    private static String Url = "";
+
+    //Guardara el html de la pagina web
     private static String textoHTML="";
+
+    //Rutas relativas
     private static final String com = "../psp_u1_fills_FTR/";
-    private static final String errorLog = "../psp_u1_pare_FTR/errores.txt";
+    private static final String errorLog = "errores.txt";
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        String Url;
         // Solicitar la URL y validar el formato
         do {
             System.out.print("Introduce la URL de la página web (debe comenzar con http:// o https://): ");
@@ -19,7 +22,6 @@ public class Principal {
 
             //Compruebo que la url es correcta
             if (Url.startsWith("http://") || Url.startsWith("https://")) {
-                paginaWeb = Url;
                 System.out.println("URL válida.");
             } else {
                 System.out.println("URL no válida.");
@@ -64,19 +66,20 @@ public class Principal {
                 default -> System.out.println("Opción no válida. Inténtelo de nuevo.");
             }
         } while (opcion != 8);
-        //Como he usado waitfor en todos los metodos, todos los processos deberian estar cerrados, por que solo falta cerrar el scanner
+        //Como he usado waitfor en todos los metodos, todos los processos deberian estar cerrados, por lo que solo falta cerrar el scanner
         sc.close();
 
     }
 
     // Método para cargar la página web
     private static void cargarPaginaWeb() {
-        // Obtener el directorio actual
+        //Nombre del proceso hijo
         String filename="CargarPaginaWeb";
-        ProcessBuilder pb;
 
+        ProcessBuilder pb;
         try {
-            pb = new ProcessBuilder("java","-cp","psp_u1_fills_FTR.jar",filename,paginaWeb);
+            //Creo el processbuilder y el processo
+            pb = new ProcessBuilder("java","-cp","psp_u1_fills_FTR.jar",filename,Url);
             pb.directory(new File(com));
             pb.redirectError(new File(errorLog));
             Process p=pb.start();
@@ -102,6 +105,7 @@ public class Principal {
     }
 
     public static void analizarCaracter(){
+        //Compruebo si se ha cargado la pagina en textoHTML
         if(textoHTML.isEmpty()) {
             System.out.println("Primero se necesita cargar la pagina web. Este proceso se hara automaticamente");
             cargarPaginaWeb();
@@ -121,11 +125,12 @@ public class Principal {
             }
         }while (input.length() != 1);
 
-        // Obtener el directorio actual
+        //Nombre del proceso hijo
         String filename="AnalizarNombreCaracteres";
         ProcessBuilder pb;
 
         try {
+            //Creo el processbuilder y el processo
             pb = new ProcessBuilder("java","-cp","psp_u1_fills_FTR.jar",filename, input);
             pb.directory(new File(com));
             pb.redirectError(new File(errorLog));
@@ -151,6 +156,7 @@ public class Principal {
     }
 
     public static void sustituirLetra() {
+        //Compruebo si se ha cargado la pagina en textoHTML
         if (textoHTML.isEmpty()) {
             System.out.println("Primero se necesita cargar la página web. Este proceso se hará automáticamente.");
             cargarPaginaWeb();
@@ -177,11 +183,12 @@ public class Principal {
             }
         } while (letraSustituta.length() != 1 || !Character.isLetter(letraSustituta.charAt(0)));
 
-        // Obtener el directorio actual
+        //Nombre del proceso hijo
         String filename="SustituirLetra";
         ProcessBuilder pb;
 
         try {
+            //Creo el processbuilder y el processo
             pb = new ProcessBuilder("java","-cp","psp_u1_fills_FTR.jar",filename, letraOriginal, letraSustituta);
             pb.directory(new File(com));
             pb.redirectError(new File(errorLog));
@@ -205,11 +212,31 @@ public class Principal {
     }
 
     public static void leerEncrypted() {
-        // Directorio del archivo LeerEncrypted.java
+
+        File encryptedFile = new File(com+"/encrypted.txt");
+
+        // Comprobar si el archivo encrypted.txt existe
+        if (!encryptedFile.exists()) {
+            System.out.println("El archivo encrypted.txt no existe.");
+            System.out.println("¿Deseas ejecutar la opción 3 (Sustituir letra) para crearlo? (s/n)");
+
+            Scanner sc = new Scanner(System.in);
+            String respuesta = sc.nextLine().trim().toLowerCase();
+
+            if (respuesta.equals("s")) {
+                sustituirLetra();  // Llamar al método para sustituir letras y crear encrypted.txt
+            } else {
+                System.out.println("No se puede crear index.html sin el archivo encrypted.txt.");
+                return;
+            }
+        }
+
+        //Nombre del proceso hijo
         String filename = "LeerEncrypted";
 
         ProcessBuilder pb;
         try {
+            //Creo el processbuilder y el processo
             pb = new ProcessBuilder("java","-cp","psp_u1_fills_FTR.jar", filename);
             pb.directory(new File(com));
             pb.redirectError(new File(errorLog));
@@ -235,6 +262,7 @@ public class Principal {
     }
 
     public static void buscarPalabraClave() {
+        //Compruebo si se ha cargado la pagina en textoHTML
         if (textoHTML.isEmpty()) {
             System.out.println("Primero se necesita cargar la página web. Este proceso se hará automáticamente.");
             cargarPaginaWeb();
@@ -254,11 +282,12 @@ public class Principal {
             }
         } while (!palabraClave.matches("\\w+"));
 
-        // Directorio y archivo de errores
+        //Nombre del proceso hijo
         String filename = "BuscarPalabraClave";
         ProcessBuilder pb;
 
         try {
+            //Creo el processbuilder y el processo
             pb = new ProcessBuilder("java","-cp","psp_u1_fills_FTR.jar", filename, palabraClave);
             pb.directory(new File(com));
             pb.redirectError(new File(errorLog));
@@ -294,25 +323,27 @@ public class Principal {
             System.out.println("¿Deseas ejecutar la opción 3 (Sustituir letra) para crearlo? (s/n)");
 
             Scanner sc = new Scanner(System.in);
-            String respuesta = sc.nextLine().trim().toLowerCase();
+            String respuesta = sc.nextLine().trim().toLowerCase();//uso trim para eleminar posibles epacios y lower case para la mayusculas
 
+            //Si la respuesta es s ejecuto el metodo 3
             if (respuesta.equals("s")) {
-                sustituirLetra();  // Llamar al método para sustituir letras y crear encrypted.txt
+                sustituirLetra();
             } else {
                 System.out.println("No se puede crear index.html sin el archivo encrypted.txt.");
                 return;
             }
         }
 
-        // Ejecutar el proceso hijo para crear index.html
         System.out.println("Creando index:");
+
+        //Nombre del proceso hijo
         String filename = "CrearArchivoIndex";
 
         ProcessBuilder pb;
         try {
+            //Creo el processbuilder y el processo
             pb = new ProcessBuilder("java","-cp","psp_u1_fills_FTR.jar", filename);
             pb.directory(new File(com));
-            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
             pb.redirectError(new File(errorLog));
             Process p = pb.start();
             p.waitFor();
@@ -343,13 +374,15 @@ public class Principal {
         }
 
         System.out.println("Ejecutando index:");
+
+        //Nombre del proceso hijo
         String filename = "EjecutarIndex";
 
         ProcessBuilder pb;
         try {
+            //Creo el processbuilder y el processo
             pb = new ProcessBuilder("java","-cp","psp_u1_fills_FTR.jar", filename);
             pb.directory(new File(com));
-            pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
             pb.redirectError(new File(errorLog));
             Process p = pb.start();
             p.waitFor();

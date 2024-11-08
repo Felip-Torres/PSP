@@ -5,13 +5,10 @@ import java.net.URL;
 
 public class CargarPaginaWeb {
     public static void main(String[] args) {
-        if (args.length != 1) {
-            System.err.println("Argumentos incorrectos");
-            System.exit(1);
-        }
-
+        //No compruebo los argumentos, porque ya lo hace el padre
         String urlString = args[0];
         try {
+
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();// conecta a la pagina
             connection.setRequestMethod("GET");//GET es el metodo mas comun
@@ -22,15 +19,8 @@ public class CargarPaginaWeb {
                 System.exit(2);
             }
 
-            // Leer el contenido de la página
+            // Leo y envio al padre el contenido de la página
             try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
-                /*String cad="";
-                String linea;
-
-                while ((linea = br.readLine()) != null) {
-                    cad+=linea;
-                }
-                System.out.println(cad);*/
 
                 String linea;
 

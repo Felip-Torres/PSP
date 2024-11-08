@@ -6,16 +6,13 @@ import java.io.InputStreamReader;
 
 public class SustituirLetra {
     public static void main(String[] args) {
-        if (args.length != 2) {
-            System.err.println("Se requieren dos letras como argumentos.");
-            System.exit(1);
-        }
-
+        //No compruebo los argumentos, porque ya lo hace el padre
         String letraOriginal = args[0];
         String letraSustituta = args[1];
+
         StringBuilder contenidoModificado = new StringBuilder();
 
-        // Leer el contenido enviado por el proceso padre
+        //Leo el textoHTML del padre
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
@@ -26,7 +23,7 @@ public class SustituirLetra {
             System.exit(2);
         }
 
-        // Guardar el contenido modificado en "encrypted.txt"
+        // Guardo el contenido modificado en "encrypted.txt"
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("encrypted.txt"))) {
             writer.write(contenidoModificado.toString());
             System.out.println("Archivo 'encrypted.txt' creado con exito.");
