@@ -31,7 +31,7 @@ public class CrearArchivoIndex {
             // Generar el archivo index.html con la estructura HTML
             writer.println("<html>");
             writer.println("<head><title>Contenido de encrypted.txt</title></head>");
-            writer.println(contenidoBody.toString().trim());
+            writer.println(contenidoBody.toString());
             writer.println("</body>");
             writer.println("</html>");
 
